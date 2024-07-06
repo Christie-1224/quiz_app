@@ -1,0 +1,27 @@
+name: Build Windows Executable
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.' # 使用你的Python版本
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        pip install -r requirements.txt
+    - name: Build executable
+      run: |
+        pyinstaller --onefile --add-data "quiz_state.txt;." --add-data "test.xlsx;." quiz_app.py
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: quiz_app
+        path: dist/quiz_app.exe
